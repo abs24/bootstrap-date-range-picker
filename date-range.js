@@ -50,16 +50,13 @@
         setting.datePopup.find(".m-date-range-custom-days").on("click", function () {
             customDateRange(getInstance($(this)));
         });
-        setting.element.on("focus", function () {
-            var instance = $(this).data("dateRange");
-            showDateRangePicker(instance);
-        });
-        $(document).on("click", function (e) {
-            if ($(e.target).closest("#date-range-custom-" + setting.id).length == 0 && $(e.target).closest("#" + setting.id).length == 0)
-            {
+        setting.element.on("focus",openOnFocus);
+        $(document).on("click.cdr" + setting.id, function (e) {
+            if ($(e.target).closest("#date-range-custom-" + setting.id).length == 0 && $(e.target).closest("#" + setting.id).length == 0) {
                 $("#date-range-custom-" + setting.id).hide();
                 setting.element.trigger("dateRange:hidden", { instance: setting });
             }
+
         });
 
         setting.datePopup.find(".apply-range").on("click", function () {
@@ -119,9 +116,14 @@
         {
             selectToday(setting,true);
         }
-        
         setting.element.trigger("dateRange:initComplete", { instance: setting });
     }
+    function openOnFocus(e)
+    {
+        var instance = $(this).data("dateRange");
+        showDateRangePicker(instance);
+    }
+   
     function applyDateRange(setting)
     {
         setting.selectedFrom = setting.from;
@@ -349,38 +351,72 @@
             initDateRange(instance);
 
         }
-        else if (arguments.length == 1 && typeof action == "undefined" && action == null)
+        else if (arguments.length == 1 && typeof action != "undefined" && action != null)
         {
-            var options = $.extend(true, {}, {
-                fromDate: "",
-                toDate: "",
-                format: "yyyy-MM-dd"
-            }, action);
-
-            if (options.fromDate != "")
+            if (action != "destroy")
             {
-                options.selectedFromTicks = Date.parse(options.fromDate).getTime();
-            }
+                var options = $.extend(true, {}, {
+                    fromDate: "",
+                    toDate: "",
+                    format: "yyyy-MM-dd"
+                }, action);
 
-            if (options.toDate != "") {
-                options.selectedToTicks = Date.parse(options.toDate).getTime();
+                if (options.fromDate != "") {
+                    options.selectedFromTicks = Date.parse(options.fromDate).getTime();
+                }
+
+                if (options.toDate != "") {
+                    options.selectedToTicks = Date.parse(options.toDate).getTime();
+                }
+                if (options.format == null || options.format.trim() == "") {
+                    options.format = "yyyy-MM-dd";
+                }
+
+                var instance = {
+                    element: $(this),
+                    selectedFrom: options.fromDate,
+                    selectedFromTicks: options.selectedFromTicks,
+                    selectedTo: options.toDate,
+                    selectedToTicks: options.selectedToTicks,
+                    format: options.format
+                }
+                $(this).data("dateRange", instance);
+                initDateRange(instance);
             }
-            if (options.format == null || options.format.trim() == "")
+            else
             {
-                options.format = "yyyy-MM-dd";
-            }
+                try
+                {
+                   var instance =  $(this).data("dateRange");
+                   if(typeof instance != "undefined" && instance != null)
+                   {
+                       $(this).data("dateRange", null);
+                       
+                       //remove all the events 
+                       instance.datePopup.find(".m-date-range-today").off("click");
+                       instance.datePopup.find(".m-date-range-yesterday").off("click");
+                       instance.datePopup.find(".m-date-range-7days").off("click");
+                       instance.datePopup.find(".m-date-range-29days").off("click");
+                       instance.datePopup.find(".m-date-range-this-month").off("click");
+                       instance.datePopup.find(".m-date-range-last-month").off("click");
+                       instance.datePopup.find(".m-date-range-custom-days").off("click");
+                       instance.element.off("focus", openOnFocus);
+                       $(document).off("click.cdr" + instance.id);
 
-            var instance = {
-                element: $(this),
-                selectedFrom: options.fromDate,
-                selectedFromTicks: options.selectedFromTicks,
-                selectedTo: options.toDate,
-                selectedToTicks: options.selectedToTicks,
-                format: options.format
+                       instance.datePopup.find(".apply-range").off("click");
+                       instance.datePopup.find(".cancel-range").off("click");
+                       //make sure the daterange is removed from body before 
+                       instance.datePopup.remove();
+                   }
+                  
 
+                }
+                catch(e)
+                {
+                    console.log("no date picker is initialized");
+                }
             }
-            $(this).data("dateRange", instance);
-            initDateRange(instance);
+           
 
         }
         else if (arguments.length == 2) {
@@ -388,10 +424,4 @@
 
         }
     }
-
-
-
-
-
-
 })(jQuery);
