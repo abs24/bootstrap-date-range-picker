@@ -1,0 +1,97 @@
+.m-date-range-wrapper
+{
+    position:absolute;
+    top: 158px;
+    background:#FFF;
+    z-index: 1;
+    display:none;
+}
+.m-date-range-inner-wrapper
+{
+    position:relative;
+    border: 1px solid #ddd;
+    -webkit-box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+   
+    padding: 10px;
+}
+.m-date-range-inner-wrapper::before
+{
+    position: absolute;
+    top: -7px;
+    left: 9px;
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #ccc;
+    border-left: 7px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    content: '';
+    clear:both;
+}
+.m-date-range-inner-wrapper .m-range-wrapper ul
+{
+    padding:0;
+    margin:0;
+}
+.m-date-range-inner-wrapper .m-range-wrapper li
+{
+    padding:0;
+    margin:0;
+    list-style:none;
+    padding:5px 15px;
+    background:#f2f2f2;
+    margin:4px 0;
+    cursor:pointer;
+}
+.m-date-range-inner-wrapper .m-range-wrapper li a:hover
+{
+   text-decoration:none;
+}
+.m-date-range-inner-wrapper .m-action-btn button
+{
+    margin-left:5px;
+}
+.m-date-range-inner-wrapper .calender-container
+{
+    float:left;
+}
+.m-date-range-inner-wrapper .calender-container::after
+{
+    content:"";
+    clear:both;
+}
+.m-date-range-inner-wrapper .m-range-wrapper
+{
+     float:left;
+}
+.m-date-range-inner-wrapper .calender-container .from-calender,
+.m-date-range-inner-wrapper .calender-container .to-calender
+{
+    float:left;
+}
+.clearfix:before,.clearfix:after{
+    clear:both;
+}
+.m-date-range-inner-wrapper .date-selected
+{
+    background:#357ebd !important;
+    color:#FFF !important;
+
+}
+.m-date-range-inner-wrapper .date-selected a
+{
+    color:#FFF !important;
+}
+.m-date-range-inner-wrapper .final-from,
+.m-date-range-inner-wrapper .final-to
+{
+    width:90px;
+}
+.m-date-range-inner-wrapper .calender-container .from-calender,
+.m-date-range-inner-wrapper .calender-container .to-calender
+{
+    border: 1px solid #ddd;
+    padding:5px;
+    margin:5px;
+}
