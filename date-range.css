@@ -6,6 +6,12 @@
     z-index: 1;
     display:none;
 }
+.m-date-range-wrapper .datepicker td span
+{
+  height:62px !important;
+  line-height:62px !important;
+  
+}
 .m-date-range-inner-wrapper
 {
     position:relative;
@@ -14,7 +20,7 @@
     -moz-box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
    
-    padding: 10px;
+    padding: 2px;
 }
 .m-date-range-inner-wrapper::before
 {
@@ -40,7 +46,7 @@
     margin:0;
     list-style:none;
     padding:5px 15px;
-    background:#f2f2f2;
+    border:1px solid #e2e2e2;
     margin:4px 0;
     cursor:pointer;
 }
@@ -51,6 +57,14 @@
 .m-date-range-inner-wrapper .m-action-btn button
 {
     margin-left:5px;
+    border-radius: 0px !important;
+    width:45%;
+    
+}
+.m-date-range-inner-wrapper .m-action-btn
+{
+  padding:10px 0;
+  
 }
 .m-date-range-inner-wrapper .calender-container
 {
@@ -87,6 +101,9 @@
 .m-date-range-inner-wrapper .final-to
 {
     width:90px;
+    border: 1px solid #DDD;
+    border-radius: 10px;
+    padding: 5px;
 }
 .m-date-range-inner-wrapper .calender-container .from-calender,
 .m-date-range-inner-wrapper .calender-container .to-calender
@@ -94,6 +111,7 @@
     border: 1px solid #ddd;
     padding:5px;
     margin:5px;
+    min-width: 240px;
 }
 .m-date-range-inner-wrapper .calender-container .active,
 .m-date-range-inner-wrapper .calender-container td.active:hover {
