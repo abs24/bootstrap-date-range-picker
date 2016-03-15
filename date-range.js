@@ -2,8 +2,26 @@
     "use strict"
 
     /* function to init date range input box */
+    
+    $.idCounter = 0;
+    $.fn.BuniqueId = function(prefix) {
+      
+      if($(this).attr("id") == "")
+      {
+        var id = ++$.idCounter + '';
+        if(prefix)
+          id = prefix + id;
+        $(this).attr("id",id);
+      }
+      
+      return $(this);
+      
+      
+    };
+    
+    
     function initDateRange(setting) {
-        setting.element.uniqueId();
+        setting.element.BuniqueId(); 
         setting.id = setting.element.attr("id");
         
         $("body").append(getDateRangePopupTemplate(setting));
@@ -133,6 +151,8 @@
         setting.element.trigger("dateRange:apply", { instance: setting });
         $("#date-range-custom-" + setting.id).hide();
         setting.element.val(setting.selectedFrom + " to " + setting.selectedTo);
+        setting.element.attr("data-startDate",setting.selectedFrom);
+        setting.element.attr("data-endDate",setting.selectedTo);
     }
 
     function showDateRangePicker(setting)
@@ -255,6 +275,7 @@
     {
         setting.datePopup.find(".final-from").val(setting.from);
         setting.datePopup.find(".final-to").val(setting.to);
+        
     }
     function highlightSelection(setting,skipDateSetting)
     {
@@ -333,7 +354,33 @@
        return template;
     }
 
-
+    function setDateRange(setting,range)
+    {
+      /* check the given range is valid */
+      if(range.fromDate != null && range.fromDate != "" && range.toDate != null && range.toDate != "")
+      {
+         
+      
+        if(Date.parse(range.fromDate).getTime() <= Date.parse(range.toDate).getTime())
+        {
+          
+           setting.fromTicks = Date.parse(range.fromDate).getTime();
+           setting.toTicks= Date.parse(range.toDate).getTime();
+           setting.from = Date.parse(range.fromDate).toString(setting.format);
+           setting.to = Date.parse(range.toDate).toString(setting.format);
+           setting.selected = "";
+           highlightSelection(setting,false);
+           applyDateRange(setting);
+        }
+        else
+        {
+           console.log("not a valid range");
+        }
+      }
+      else
+       console.log("not a valid range");
+      return;
+    }
 
     $.fn.bootstrapDateRange = function (action, actionValue) {
 
@@ -353,9 +400,52 @@
         }
         else if (arguments.length == 1 && typeof action != "undefined" && action != null)
         {
-            if (action != "destroy")
+            if (action == "destroy")
             {
-                var options = $.extend(true, {}, {
+                try
+                {
+                   var instance =  $(this).data("dateRange");
+                   if(typeof instance != "undefined" && instance != null)
+                   {
+                       $(this).data("dateRange", null);
+                       
+                       //remove all the events 
+                       instance.datePopup.find(".m-date-range-today").off("click");
+                       instance.datePopup.find(".m-date-range-yesterday").off("click");
+                       instance.datePopup.find(".m-date-range-7days").off("click");
+                       instance.datePopup.find(".m-date-range-29days").off("click");
+                       instance.datePopup.find(".m-date-range-this-month").off("click");
+                       instance.datePopup.find(".m-date-range-last-month").off("click");
+                       instance.datePopup.find(".m-date-range-custom-days").off("click");
+                       instance.element.off("focus", openOnFocus);
+                       $(document).off("click.cdr" + instance.id);
+
+                       instance.datePopup.find(".apply-range").off("click");
+                       instance.datePopup.find(".cancel-range").off("click");
+                       //make sure the daterange is removed from body before 
+                       instance.datePopup.remove();
+                   }
+                }
+                catch(e)
+                {
+                    console.log("no date picker is initialized");
+                }
+            }
+            if(action == "value")
+            {
+              var instance =  $(this).data("dateRange");
+              return {
+                fromDate:instance.selectedFrom,
+                toDate:instance.selectedTo,
+                toTicks:instance.selectedToTicks,
+                fromTicks:instance.selectedFromTicks
+              }
+               
+              
+            }
+            else
+            {
+               var options = $.extend(true, {}, {
                     fromDate: "",
                     toDate: "",
                     format: "yyyy-MM-dd"
@@ -383,43 +473,29 @@
                 $(this).data("dateRange", instance);
                 initDateRange(instance);
             }
-            else
-            {
-                try
-                {
-                   var instance =  $(this).data("dateRange");
-                   if(typeof instance != "undefined" && instance != null)
-                   {
-                       $(this).data("dateRange", null);
-                       
-                       //remove all the events 
-                       instance.datePopup.find(".m-date-range-today").off("click");
-                       instance.datePopup.find(".m-date-range-yesterday").off("click");
-                       instance.datePopup.find(".m-date-range-7days").off("click");
-                       instance.datePopup.find(".m-date-range-29days").off("click");
-                       instance.datePopup.find(".m-date-range-this-month").off("click");
-                       instance.datePopup.find(".m-date-range-last-month").off("click");
-                       instance.datePopup.find(".m-date-range-custom-days").off("click");
-                       instance.element.off("focus", openOnFocus);
-                       $(document).off("click.cdr" + instance.id);
-
-                       instance.datePopup.find(".apply-range").off("click");
-                       instance.datePopup.find(".cancel-range").off("click");
-                       //make sure the daterange is removed from body before 
-                       instance.datePopup.remove();
-                   }
-                  
-
-                }
-                catch(e)
-                {
-                    console.log("no date picker is initialized");
-                }
-            }
            
 
         }
         else if (arguments.length == 2) {
+          
+          if(action != null && action != "" && actionValue != null && actionValue != "")
+          {
+            var instance =  $(this).data("dateRange");
+            switch(action)
+            {
+              case "setDateRange": setDateRange(instance,actionValue);break;
+              default: console.log("specified action not found");break;
+            }
+          }
+          else
+          {
+            console.log("not valid parameters")
+            
+          }
+          
+          
+          
+          
 
 
         }
