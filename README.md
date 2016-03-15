@@ -22,6 +22,14 @@ js
       $("#test").bootstrapDateRange();
     });
 
+Parameter initialization
+    $(document).ready(function(){
+        $("#test").bootstrapDateRange({
+            fromDate: "",
+            toDate: "",
+            format: "yyyy-MM-dd"
+        });
+    });
 getting value from date range picker
 
     $("#test").bootstrapDateRange('value');
